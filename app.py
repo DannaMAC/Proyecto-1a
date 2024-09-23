@@ -16,10 +16,13 @@ def add_depto():
         print("Ejecutado con exito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        if error.code == 20100:
-            print("Error: tal")
+        error_message = error.message.split('\n')[0]
+        if error.code == 20101:
+            print("Error: ", error_message)
+        elif error.code == 20102:
+            print("Error: ", error_message)
         else:
-            print("Error: ", error.message)
+            print("Error: ", error_message)
 
 def update_depto():
     print("en proceso...")
