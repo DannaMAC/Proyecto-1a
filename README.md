@@ -4,6 +4,8 @@ Esta es una aplicación CRUD (Crear, Leer, Actualizar, Eliminar) simple desarrol
 
 ## Integrantes 
 
-Emiliano 
-Hector
-Danna
+Emiliano Rivera
+
+Hector Mendrano
+
+Danna Corral
