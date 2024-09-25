@@ -28,12 +28,25 @@ def add_depto():
 def update_depto():
     print("Ingresa el número de departamento a actualizar: ")
     deptno = int(input())
-    print("Ingresa el nuevo nombre del departamento: ")
-    dname = input()
-    print("Ingresa la nueva localidad: ")
-    loc = input()
+    print("1- Nombre del departamento")
+    print("2- Localidad")
+    print("3- Salir")
+    opcion = int(input())
+    field = ""
+    new = 0
+    match opcion:
+        case 1:
+            print("Ingresa el nuevo nombre del departamento: ")
+            new = input()
+            field = "DNAME"
+        case 2:
+            print("Ingresa la nueva localidad: ")
+            new = input()
+            field = "LOC"
+        case 3:
+            print("Saliendo...")
     try:
-        cur.callproc('update_depto', (deptno, dname, loc))
+        cur.callproc('update_depto', (deptno, field, new))
         print("Departamento actualizado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
@@ -112,28 +125,56 @@ def delete_emp():
 def update_emp():
     print("Ingresa el número de empleado a actualizar: ")
     empno = int(input())
-    print("Ingresa el nuevo nombre del empleado: ")
-    ename = input()
-    print("Escribe el nuevo trabajo del empleado: ")
-    job = input()
-    print("Escribe el nuevo id del manager del empleado: ")
-    mgr = validate_null_input(input())
-    print("Escribe el nuevo dia de contratacion: ")
-    day = int(input())
-    print("Escribe el nuevo mes de contratacion: ")
-    month = validate_month(input())
-    print("Escribe el nuevo año de contratacion: ")
-    year = validate_year(input())
-    print("Ingresa el nuevo salario: ")
-    sal = int(input())
-    print("Escribe la nueva comision del empleado: ")
-    comm = validate_null_input(input())
-    print("Ingresa el nuevo número de departamento: ")
-    deptno = int(input())
-
-    date = (f"{day}-{month}-{year}")
+    print("1- Nombre")
+    print("2- Trabajo")
+    print("3- Manager")
+    print("4- Fecha de Contratacion")
+    print("5- Salario")
+    print("6- Comision")
+    print("7- Numero de departamento")
+    print("8- Salir")
+    opcion = int(input())
+    field = ""
+    new = 0
+    match opcion:
+        case 1:
+            print("Ingresa el nuevo nombre del empleado: ")
+            new = input()
+            field = "ENAME"
+        case 2:
+            print("Escribe el nuevo trabajo del empleado: ")
+            new = input()
+            field = "JOB"
+        case 3:
+            print("Escribe el nuevo id del manager del empleado: ")
+            new = validate_null_input(input())
+            field = "MGR"
+        case 4:
+            print("Escribe el nuevo dia de contratacion: ")
+            day = int(input())
+            print("Escribe el nuevo mes de contratacion: ")
+            month = validate_month(input())
+            print("Escribe el nuevo año de contratacion: ")
+            year = validate_year(input())
+            new = (f"{day}-{month}-{year}")
+            field = "HIREDATE"
+        case 5:
+            print("Ingresa el nuevo salario: ")
+            new = int(input())
+            field = "SAL"
+        case 6:
+            print("Escribe la nueva comision del empleado: ")
+            new = validate_null_input(input())
+            field = "COMM"
+        case 7:
+            print("Ingresa el nuevo número de departamento: ")
+            new = int(input())
+            field = "DEPTNO"
+        case 8:
+            print("Saliendo...")
+    
     try:
-        cur.callproc('update_emp', (empno, ename, job, mgr, date, sal, comm, deptno))
+        cur.callproc('update_emp', (empno, field, new))
         print("Empleado actualizado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args

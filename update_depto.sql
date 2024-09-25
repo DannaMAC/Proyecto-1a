@@ -1,13 +1,12 @@
 SET SERVEROUTPUT ON;
 
-SET SERVEROUTPUT ON;
-
 CREATE OR REPLACE PROCEDURE update_depto (
     no_dept NUMBER,
-    name_dept VARCHAR2,
-    location_dept VARCHAR2)
+    field VARCHAR2,
+    new_v VARCHAR2)
 IS
     no_cont NUMBER;
+    OpSql VARCHAR2(400);
     error_dept_not_found EXCEPTION;
 BEGIN
     SELECT COUNT(*)
@@ -19,10 +18,8 @@ BEGIN
         RAISE error_dept_not_found;
     END IF;
 
-    UPDATE DEPT
-    SET DNAME = name_dept,
-        LOC = location_dept
-    WHERE DEPTNO = no_dept;
+    OpSql := 'UPDATE DEPT SET '||field||' = :d_new WHERE deptno = :dep_id';
+    EXECUTE IMMEDIATE OpSql USING new_v, no_dept;
 
     COMMIT;
 

@@ -2,15 +2,11 @@ SET SERVEROUTPUT ON;
 
 CREATE OR REPLACE PROCEDURE update_emp (
     emp_no NUMBER,
-    e_name VARCHAR2,
-    e_job VARCHAR2,
-    e_mgr NUMBER,
-    e_hiredate DATE,
-    e_sal NUMBER,
-    e_comm NUMBER,
-    e_deptno NUMBER)
+    field VARCHAR2,
+    new_v VARCHAR2)
 IS
     no_cont NUMBER;
+    OpSql VARCHAR2(400);
     error_emp_not_found EXCEPTION;
 BEGIN
     SELECT COUNT(*)
@@ -22,15 +18,8 @@ BEGIN
         RAISE error_emp_not_found;
     END IF;
 
-    UPDATE EMP
-    SET ENAME = e_name,
-        JOB = e_job,
-        MGR = e_mgr,
-        HIREDATE = e_hiredate,
-        SAL = e_sal,
-        COMM = e_comm,
-        DEPTNO = e_deptno
-    WHERE EMPNO = emp_no;
+    OpSql := 'UPDATE EMP SET '||field||' = :e_new WHERE empno = :emp_id';
+    EXECUTE IMMEDIATE OpSql USING new_v, emp_no;
 
     COMMIT;
 
