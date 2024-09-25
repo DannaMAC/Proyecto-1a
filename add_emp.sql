@@ -1,14 +1,14 @@
 SET SERVEROUTPUT ON;
 
 CREATE OR REPLACE PROCEDURE add_emp (
-    empno NUMBER,
-    ename VARCHAR2,
-    job VARCHAR2,
-    mgr NUMBER,
-    hiredate DATE,
-    sal NUMBER,
-    comm NUMBER,
-    deptno NUMBER)
+    emp_no NUMBER,
+    e_name VARCHAR2,
+    e_job VARCHAR2,
+    e_mgr NUMBER,
+    e_hiredate DATE,
+    e_sal NUMBER,
+    e_comm NUMBER,
+    e_deptno NUMBER)
 IS
     no_cont NUMBER;
     error_emp_rep EXCEPTION;
@@ -16,14 +16,14 @@ BEGIN
     SELECT COUNT(*)
     INTO no_cont
     FROM EMP
-    WHERE EMPNO = empno;
+    WHERE EMPNO = emp_no;
 
     IF no_cont > 0 THEN
         RAISE error_emp_rep;
     END IF;
 
     INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
-    VALUES (empno, ename, job, mgr, hiredate, sal, comm, deptno);
+    VALUES (emp_no, e_name, e_job, e_mgr, e_hiredate, e_sal, e_comm, e_deptno);
 
     COMMIT;
 

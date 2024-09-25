@@ -15,7 +15,13 @@ def add_depto():
         print("Departamento agregado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')[0]
+        if error.code == 20101:
+            print("Error: El departamento no es divisible entre 10")
+        elif error.code == 20102:
+            print("Error: El numero de departamento ya existe")
+        else:
+            print("Error: ", error_message)
 
 def update_depto():
     print("Ingresa el número de departamento a actualizar: ")
@@ -29,7 +35,11 @@ def update_depto():
         print("Departamento actualizado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')[0]
+        if error.code == 20103:
+            print("Error: El departamento no existe")
+        else:
+            print("Error: ", error_message)
 
 def delete_depto():
     print("Ingresa el número de departamento a eliminar: ")
@@ -39,23 +49,45 @@ def delete_depto():
         print("Departamento eliminado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')[0]
+        if error.code == 20106:
+            print("Error: El empleado no existe")
+        else: 
+            print("Error: ", error_message)
 
 def add_emp():
     print("Ingresa el número de empleado: ")
     empno = int(input())
     print("Ingresa el nombre del empleado: ")
     ename = input()
+    print("Escribe el trabajo del empleado: ")
+    job = input()
+    print("Escribe el id del manager del empleado: ")
+    mgr = int(input())
+    print("Escribe el dia de contratacion: ")
+    day = int(input())
+    print("Escribe el mes de contratacion: ")
+    month = input()
+    print("Escribe el año de contratacion: ")
+    year = int(input())
+    print("Ingresa el salario: ")
+    sal = int(input())
+    print("Escribe la comision del empleado: ")
+    comm = int(input())
     print("Ingresa el número de departamento: ")
     deptno = int(input())
-    print("Ingresa el salario: ")
-    sal = float(input())
+    
+    date = (f"{day}-{month}-{year}")
     try:
-        cur.callproc('add_emp', (empno, ename, deptno, sal))
+        cur.callproc('add_emp', (empno, ename, job, mgr, date, sal, comm, deptno))
         print("Empleado agregado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')[0]
+        if error.code == 20104:
+            print("Error: El número de empleado ya existe")
+        else:
+            print("Error: ", error_message)
 
 def delete_emp():
     print("Ingresa el número de empleado a eliminar: ")
@@ -65,32 +97,59 @@ def delete_emp():
         print("Empleado eliminado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')
+        if error.code == 20106:
+            print("El empleado no existe")
+        else:
+            print("Error: ", error_message)
 
 def update_emp():
     print("Ingresa el número de empleado a actualizar: ")
     empno = int(input())
     print("Ingresa el nuevo nombre del empleado: ")
     ename = input()
+    print("Escribe el nuevo trabajo del empleado: ")
+    job = input()
+    print("Escribe el nuevo id del manager del empleado: ")
+    mgr = int(input())
+    print("Escribe el nuevo dia de contratacion: ")
+    day = int(input())
+    print("Escribe el nuevo mes de contratacion: ")
+    month = input()
+    print("Escribe el nuevo año de contratacion: ")
+    year = int(input())
     print("Ingresa el nuevo salario: ")
-    sal = float(input())
+    sal = int(input())
+    print("Escribe la nueva comision del empleado: ")
+    comm = int(input())
+    print("Ingresa el nuevo número de departamento: ")
+    deptno = int(input())
+
+    date = (f"{day}-{month}-{year}")
     try:
-        cur.callproc('update_emp', (empno, ename, sal))
+        cur.callproc('update_emp', (empno, ename, job, mgr, date, sal, comm, deptno))
         print("Empleado actualizado con éxito")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')
+        if error.code == 20105:
+            print("Error: El empleado no existe")
+        else:
+            print("Error: ", error_message)
 
 def noEmp_depto():
     print("Ingresa el número de departamento: ")
     deptno = int(input())
     try:
-        cur.execute('SELECT COUNT(*) FROM empleados WHERE deptno = :deptno', deptno=deptno)
-        count = cur.fetchone()[0]
-        print(f"El número de empleados en el departamento {deptno} es {count}")
+        count = cur.callfunc('noemp_depto',cx_Oracle.NUMBER, [deptno])
+        print(f"El número de empleados en el departamento {deptno} es {int(count)}")
     except cx_Oracle.DatabaseError as err:
         error, = err.args
-        print("Error: ", error.message)
+        error_message = error.message.split('\n')
+        if error.code == 20107:
+            print("Error: El departamento no tiene empleados asociados")
+        else: 
+            print("Error: ", error_message)
 
 opcion = 0
 while opcion != 8:

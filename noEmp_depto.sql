@@ -1,28 +1,21 @@
 SET SERVEROUTPUT ON;
 
-CREATE OR REPLACE PROCEDURE noEmp_depto (
+CREATE OR REPLACE FUNCTION noEmp_depto (
     no_dept NUMBER)
+RETURN NUMBER
 IS
     no_emp NUMBER;
-    error_dept_has_emp EXCEPTION;
+    error_dept_has_no_emp EXCEPTION;
 BEGIN
-    SELECT COUNT(*)
-    INTO no_emp
-    FROM EMP
-    WHERE DEPTNO = no_dept;
-
-    IF no_emp > 0 THEN
-        RAISE error_dept_has_emp;
-    END IF;
-
-    DELETE FROM DEPT
-    WHERE DEPTNO = no_dept;
-
+    SELECT COUNT(*) INTO no_emp FROM EMP WHERE deptno = no_dept;
     COMMIT;
-
+    IF no_emp = 0 THEN
+        RAISE error_dept_has_no_emp
+    END IF;
+    RETURN no_emp
 EXCEPTION
-    WHEN error_dept_has_emp THEN
-        RAISE_APPLICATION_ERROR(-20107, 'No se puede eliminar el departamento porque tiene empleados asociados.');
+    WHEN error_dept_has_no_emp THEN
+        RAISE_APPLICATION_ERROR(-20107, 'El departamento no tiene empleados asociados.');
 
     WHEN OTHERS THEN
         ROLLBACK;

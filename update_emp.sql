@@ -1,14 +1,14 @@
 SET SERVEROUTPUT ON;
 
 CREATE OR REPLACE PROCEDURE update_emp (
-    empno NUMBER,
-    ename VARCHAR2,
-    job VARCHAR2,
-    mgr NUMBER,
-    hiredate DATE,
-    sal NUMBER,
-    comm NUMBER,
-    deptno NUMBER)
+    emp_no NUMBER,
+    e_name VARCHAR2,
+    e_job VARCHAR2,
+    e_mgr NUMBER,
+    e_hiredate DATE,
+    e_sal NUMBER,
+    e_comm NUMBER,
+    e_deptno NUMBER)
 IS
     no_cont NUMBER;
     error_emp_not_found EXCEPTION;
@@ -16,21 +16,21 @@ BEGIN
     SELECT COUNT(*)
     INTO no_cont
     FROM EMP
-    WHERE EMPNO = empno;
+    WHERE EMPNO = emp_no;
 
     IF no_cont = 0 THEN
         RAISE error_emp_not_found;
     END IF;
 
     UPDATE EMP
-    SET ENAME = ename,
-        JOB = job,
-        MGR = mgr,
-        HIREDATE = hiredate,
-        SAL = sal,
-        COMM = comm,
-        DEPTNO = deptno
-    WHERE EMPNO = empno;
+    SET ENAME = e_name,
+        JOB = e_job,
+        MGR = e_mgr,
+        HIREDATE = e_hiredate,
+        SAL = e_sal,
+        COMM = e_comm,
+        DEPTNO = e_deptno
+    WHERE EMPNO = emp_no;
 
     COMMIT;
 
