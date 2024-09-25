@@ -105,6 +105,10 @@ def delete_emp():
         else:
             print("Error: ", error_message)
 
+# TODO: VERIFICAR QUE EL EMPLEADO EXISTE
+# TODO: VERIFICAR QUE EL MANAGER EXISTA
+# TODO: VERIFICAR QUE EL SALARIO SEA MAYOR A 0
+# TODO: VERIFICAR QUE LA FK (NUMERO DE DEPARTAMENTO, NADA MÁS VERIFICAR QUE EXISTA)
 def update_emp():
     print("Ingresa el número de empleado a actualizar: ")
     empno = int(input())
@@ -191,6 +195,24 @@ def validate_year(user_input):
     if (len(user_input) >= 2):
         return user_input[-2:]
     return int(user_input)
+
+def validate_employee_existance():
+    print("Ingresa el número de pendejo: ")
+    empno = int(input())
+    try:
+        ex = cur.callfunc('check_employee_exists',cx_Oracle.NUMBER, [empno])
+
+        if (ex):
+            print(f"El empleado {empno} existe")
+        if (not ex):
+            print(f"El empleado {empno} NOOOOOOOOOOOOO existe")
+    except cx_Oracle.DatabaseError as err:
+        error, = err.args
+        error_message = error.message.split('\n')
+        if error.code == 20107:
+            print("Error: El departamento no tiene empleados asociados")
+        else: 
+            print("Error: ", error_message)
 #endregion
 
 
@@ -225,6 +247,8 @@ while opcion != 8:
             noEmp_depto()
         case 8:
             print("Saliendo...")
+        case 9:
+            validate_employee_existance()
 
 cur.close()
 conn.close()
