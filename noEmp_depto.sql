@@ -10,9 +10,9 @@ BEGIN
     SELECT COUNT(*) INTO no_emp FROM EMP WHERE deptno = no_dept;
     COMMIT;
     IF no_emp = 0 THEN
-        RAISE error_dept_has_no_emp
+        RAISE error_dept_has_no_emp;
     END IF;
-    RETURN no_emp
+    RETURN no_emp;
 EXCEPTION
     WHEN error_dept_has_no_emp THEN
         RAISE_APPLICATION_ERROR(-20107, 'El departamento no tiene empleados asociados.');
