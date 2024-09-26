@@ -17,7 +17,7 @@ BEGIN
 
     COMMIT;
 
-EXCEPTION
+EXCEPTION 
     WHEN error_dept_not_found THEN
         RAISE_APPLICATION_ERROR(-20106, 'El departamento no existe');
 
