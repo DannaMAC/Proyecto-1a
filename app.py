@@ -247,6 +247,20 @@ def validate_employee_existance(user_input):
         else:
             print("Error: ", error_message)
         return 0
+
+def validate_department_existance(user_input):
+    deptno = int(user_input)
+    try:
+        ex = cur.callfunc('check_department_exists',cx_Oracle.NUMBER, [deptno])
+        return 1
+    except cx_Oracle.DatabaseError as err:
+        error, = err.args
+        error_message = error.message.split('\n')
+        if error.code == -20106:
+            print("Error: El departamento no existe")
+        else:
+            print("Error: ", error_message)
+        return 0
 #endregion
 
 
@@ -282,7 +296,12 @@ while opcion != 8:
         case 8:
             print("Saliendo...")
         case 9:
-            validate_employee_existance()
+            while(1):
+                empno = int(input())
+                if (validate_department_existance(empno) == 1):
+                    print("hola")
+                else:
+                    print("no")
 
 cur.close()
 conn.close()
