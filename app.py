@@ -78,17 +78,17 @@ def add_emp():
     print("Escribe el trabajo del empleado: ")
     job = input()
     print("Escribe el id del manager del empleado: ")
-    mgr = int(input())
+    mgr = validate_null_input(input())
     print("Escribe el dia de contratacion: ")
     day = int(input())
     print("Escribe el mes de contratacion: ")
-    month = input()
+    month = validate_month(input())
     print("Escribe el año de contratacion: ")
-    year = int(input())
+    year = validate_year(input())
     print("Ingresa el salario: ")
     sal = int(input())
     print("Escribe la comision del empleado: ")
-    comm = int(input())
+    comm = validate_null_input(input())
     print("Ingresa el número de departamento: ")
     deptno = int(input())
     
@@ -118,71 +118,68 @@ def delete_emp():
         else:
             print("Error: ", error_message)
 
-# TODO: VERIFICAR QUE EL EMPLEADO EXISTE
 # TODO: VERIFICAR QUE EL MANAGER EXISTA
 # TODO: VERIFICAR QUE EL SALARIO SEA MAYOR A 0
 # TODO: VERIFICAR QUE LA FK (NUMERO DE DEPARTAMENTO, NADA MÁS VERIFICAR QUE EXISTA)
 def update_emp():
     print("Ingresa el número de empleado a actualizar: ")
     empno = int(input())
-    print("1- Nombre")
-    print("2- Trabajo")
-    print("3- Manager")
-    print("4- Fecha de Contratacion")
-    print("5- Salario")
-    print("6- Comision")
-    print("7- Numero de departamento")
-    print("8- Salir")
-    opcion = int(input())
-    field = ""
-    new = 0
-    match opcion:
-        case 1:
-            print("Ingresa el nuevo nombre del empleado: ")
-            new = input()
-            field = "ENAME"
-        case 2:
-            print("Escribe el nuevo trabajo del empleado: ")
-            new = input()
-            field = "JOB"
-        case 3:
-            print("Escribe el nuevo id del manager del empleado: ")
-            new = validate_null_input(input())
-            field = "MGR"
-        case 4:
-            print("Escribe el nuevo dia de contratacion: ")
-            day = int(input())
-            print("Escribe el nuevo mes de contratacion: ")
-            month = validate_month(input())
-            print("Escribe el nuevo año de contratacion: ")
-            year = validate_year(input())
-            new = (f"{day}-{month}-{year}")
-            field = "HIREDATE"
-        case 5:
-            print("Ingresa el nuevo salario: ")
-            new = int(input())
-            field = "SAL"
-        case 6:
-            print("Escribe la nueva comision del empleado: ")
-            new = validate_null_input(input())
-            field = "COMM"
-        case 7:
-            print("Ingresa el nuevo número de departamento: ")
-            new = int(input())
-            field = "DEPTNO"
-        case 8:
-            print("Saliendo...")
-    
-    try:
-        cur.callproc('update_emp', (empno, field, new))
-        print("Empleado actualizado con éxito")
-    except cx_Oracle.DatabaseError as err:
-        error, = err.args
-        error_message = error.message.split('\n')
-        if error.code == 20105:
-            print("Error: El empleado no existe")
-        else:
-            print("Error: ", error_message)
+
+    if (validate_employee_existance(empno) == 1):
+        print("1- Nombre")
+        print("2- Trabajo")
+        print("3- Manager")
+        print("4- Fecha de Contratacion")
+        print("5- Salario")
+        print("6- Comision")
+        print("7- Numero de departamento")
+        print("8- Salir")
+        opcion = int(input())
+        field = ""
+        new = 0
+        match opcion:
+            case 1:
+                print("Ingresa el nuevo nombre del empleado: ")
+                new = input()
+                field = "ENAME"
+            case 2:
+                print("Escribe el nuevo trabajo del empleado: ")
+                new = input()
+                field = "JOB"
+            case 3:
+                print("Escribe el nuevo id del manager del empleado: ")
+                inp = validate_null_input(input())
+
+                if (inp != None or validate_employee_existance(inp) != 1):
+                    print("El empleado especificado no existe")
+                else:
+                    new = inp
+                    field = "MGR"
+            case 4:
+                print("Escribe el nuevo dia de contratacion: ")
+                day = int(input())
+                print("Escribe el nuevo mes de contratacion: ")
+                month = validate_month(input())
+                print("Escribe el nuevo año de contratacion: ")
+                year = validate_year(input())
+                new = (f"{day}-{month}-{year}")
+                field = "HIREDATE"
+            case 5:
+                print("Ingresa el nuevo salario: ")
+                new = int(input())
+                field = "SAL"
+            case 6:
+                print("Escribe la nueva comision del empleado: ")
+                new = validate_null_input(input())
+                field = "COMM"
+            case 7:
+                print("Ingresa el nuevo número de departamento: ")
+                new = int(input())
+                field = "DEPTNO"
+            case 8:
+                print("Saliendo...")
+    else:
+        print("El empleado no existe")
 
 def noEmp_depto():
     print("Ingresa el número de departamento: ")
@@ -237,23 +234,19 @@ def validate_year(user_input):
         return user_input[-2:]
     return int(user_input)
 
-def validate_employee_existance():
-    print("Ingresa el número de pendejo: ")
-    empno = int(input())
+def validate_employee_existance(user_input):
+    empno = int(user_input)
     try:
         ex = cur.callfunc('check_employee_exists',cx_Oracle.NUMBER, [empno])
-
-        if (ex):
-            print(f"El empleado {empno} existe")
-        if (not ex):
-            print(f"El empleado {empno} NOOOOOOOOOOOOO existe")
+        return 1
     except cx_Oracle.DatabaseError as err:
         error, = err.args
         error_message = error.message.split('\n')
-        if error.code == 20107:
-            print("Error: El departamento no tiene empleados asociados")
-        else: 
+        if error.code == -20106:
+            print("Error: El empleado no existe")
+        else:
             print("Error: ", error_message)
+        return 0
 #endregion
 
 
