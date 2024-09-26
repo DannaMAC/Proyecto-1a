@@ -150,7 +150,7 @@ def update_emp():
                 print("Escribe el nuevo id del manager del empleado: ")
                 inp = validate_null_input(input())
 
-                if (inp != None or validate_employee_existance(inp) != 1):
+                if (inp is not None and validate_employee_existance(inp) != 1):
                     print("El empleado especificado no existe")
                 else:
                     new = inp
@@ -180,6 +180,16 @@ def update_emp():
                 print("Saliendo...")
     else:
         print("El empleado no existe")
+    try:
+        cur.callproc('update_emp', (empno, field, new))
+        print("Empleado actualizado con éxito")
+    except cx_Oracle.DatabaseError as err:
+        error, = err.args
+        error_message = error.message.split('\n')
+        if error.code == 20105:
+            print("Error: El empleado no existe")
+        else:
+            print("Error: ", error_message)
 
 def noEmp_depto():
     print("Ingresa el número de departamento: ")
